@@ -102,11 +102,11 @@ async def on_message(message) :
     except :
       await message.reply('No such word exists....Get Some Help!')
   if message.content.startswith('.tt') :
-    await message.reply(file=discord.File('timetablenew.png'))
+    await message.reply(file=discord.File('images/timetablenew.png'))
   if message.content.startswith('.al') :
-    await message.reply(file=discord.File('almanac.png'))
+    await message.reply(file=discord.File('images/almanac.png'))
   if message.content.startswith('.ex') :
-    await message.reply(file=discord.File('exam.png'))
+    await message.reply(file=discord.File('images/exam.png'))
   if message.content.startswith('.scq') :
     await message.reply('**Scheduled Quiz Dates in November**\n```OOP  - 10\nCA   - 11\nM3   - 13\nADSA - 15\nDBMS - 16```')
   if message.content.startswith('.yayy') :
