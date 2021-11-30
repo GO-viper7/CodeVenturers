@@ -7,7 +7,7 @@ from discord_components import Button, Select, SelectOption, ComponentsBot, Disc
 from webserver import keep_alive
 from discord_buttons_plugin import *
 import asyncio
-# import dnspy
+import dnspy
 import time
 import _thread
 import datetime
@@ -20,8 +20,12 @@ import random
 b = commands.Bot(command_prefix='.',intents=discord.Intents.all())
 buttons = ButtonsClient(b)
 reminder=[]
-# from pymongo import MongoClient
+from pymongo import MongoClient
 c = discord.Client()
+from wordnik import *
+apiUrl = 'http://api.wordnik.com/v4'
+apiKey = 'l7s5ukux5iy7i5qprh4b348xcr8tymlbvy2f7ysepcno637il'
+client = swagger.ApiClient(apiKey, apiUrl)
 a=[]
 rem=[]
 # import io
@@ -62,9 +66,9 @@ b.loop.create_task(ch())
 #   if after.status is discord.Status.idle:
 #     await message.reply("```U are Idle now, u shouldn't be chatting ryt? :)```")
 
-# cluster=MongoClient("mongodb+srv://GoViper:GoViper#123@bot-cluster.qe1ds.mongodb.net/test?retryWrites=true&w=majority")
-# db=cluster["test"]
-# coll=db["SFF"]
+cluster=MongoClient("mongodb+srv://GoViper:GoViper#123@bot-cluster.qe1ds.mongodb.net/test?retryWrites=true&w=majority")
+db=cluster["test"]
+coll=db["current"]
 guild = None
 async def ch() :
   await b.wait_until_ready()
@@ -128,7 +132,7 @@ b.loop.create_task(change())
 @b.command()
 async def funny(ctx, m : discord.Member) :
   try :
-    await ctx.reply(file=discord.File(f'{m.id}.png'))
+    await ctx.reply(file=discord.File(f'images/{m.id}.png'))
   except :
     await ctx.reply('Get Rekt!, No Funny moment recorded')
 
@@ -141,11 +145,47 @@ async def funny(ctx, m : discord.Member) :
 #     await channel.send(msg)
 #   await b.process_commands(message)
 
+
+
+
 @b.event
 async def on_ready():
   global guild
   guild = b.get_guild(783921718392520715)
   print("Bot Ready")
+  async def threading():
+    if(1):
+      total_seconds_wait=5
+      fg=0
+      flag=0
+      while total_seconds_wait:
+        results=coll.find({})
+        for result in results :
+            if(floor(time.time())>=result["current"]+6*60*60):
+                asyncio.run_coroutine_threadsafe(b.get_channel(850060723747815425).send("vote"), c.loop).result()
+                coll.update_one(
+                    {"gg": 1},
+                        {
+                              "$set":{
+                                      "current": floor(time.time())
+                                    }
+                        }
+                    )
+                print('Sent!')
+        if(fg==0):
+            now = floor(time.time())
+            fg=1
+        if(now+1<=floor(time.time())):
+            fg=0
+            total_seconds_wait-=1
+        if(total_seconds_wait==0):
+            total_seconds_wait=5
+  def between_callback():
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(threading())
+    loop.close()
+  _thread.start_new_thread(between_callback,())
 
 
 @b.command()
@@ -172,11 +212,12 @@ def get_string(imageLink):
     return text
 
 
+
 @b.event
 async def on_message(message) : 
   if(message.content=="vote") :
       embed=discord.Embed(title="Vote to Support",color=discord.Color.dark_grey())
-      embed.description="**Reminder Bot**` | `**VS Code Bot**"
+      embed.description="**`|`Reminder Bot**`|`**VS Code Bot`|`**"
       # embed.add_field(name="RB",value="```Reminder Bot```",inline=True)
       # embed.add_field(name="VS",value="```VS Code Bot```",inline=True)
       await buttons.send(
@@ -197,7 +238,8 @@ async def on_message(message) :
           ])
         ]
       )
-
+  if message.content=="vote" :
+    await message.delete()
   # if message.attachments and message.content.startswith('.ocr'):
   #     try :
   #           link = message.attachments[0].url
@@ -209,11 +251,10 @@ async def on_message(message) :
   #   stg = stg.replace('[', '')
   #   stg = stg.replace(']', '')    
   #   return stg
-  # if message.content.startswith('.dict'):
+  # if message.content.startswith('test'):
   #   try :
   #     b.embeds = []
-  #     msg= message.content
-  #     mesg = msg[6:]
+  #     mesg = viper
   #     app_id = "c6cda02a"
   #     app_key = "2ecbb3e71e167ce2eceaaa7e20e00b4c"
   #     language = "en"
