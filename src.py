@@ -64,7 +64,7 @@ b.loop.create_task(ch())
 #   if after.status is discord.Status.idle:
 #     await message.reply("```U are Idle now, u shouldn't be chatting ryt? :)```")
 
-cluster=MongoClient("mongodb+srv://GoViper:GoViper#123@bot-cluster.qe1ds.mongodb.net/test?retryWrites=true&w=majority")
+cluster=MongoClient()
 db=cluster["test"]
 coll=db["SFF"]
 guild = None
@@ -351,4 +351,4 @@ async def on_message(message) :
   await b.process_commands(message)
 
 keep_alive()
-b.run('ODcyNDgwMDY5NDMwNDMxNzk0.YQqeYg.BrNI68Hbpi2-PD2_07xMeX1MMBo')
+b.run()
